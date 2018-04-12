@@ -1,15 +1,15 @@
 import React, { Component, Fragment } from 'react';
-import Cabecalho from './components/Cabecalho'
-import NavMenu from './components/NavMenu'
-import Dashboard from './components/Dashboard'
-import Widget from './components/Widget'
-import TrendsArea from './components/TrendsArea'
-import Tweet from './components/Tweet'
+import Cabecalho from '../../components/Cabecalho'
+import NavMenu from '../../components/NavMenu'
+import Dashboard from '../../components/Dashboard'
+import Widget from '../../components/Widget'
+import TrendsArea from '../../components/TrendsArea'
+import Tweet from '../../components/Tweet'
 
 
 
 class Home extends Component {
-  constructor() {
+  constructor(props) {
     super()
 
     this.state = {
@@ -18,6 +18,10 @@ class Home extends Component {
     } 
     // Código triste da vida
     this.adicionaTweet = this.adicionaTweet.bind(this)
+    console.log(props)
+    if(!localStorage.getItem('TOKEN')) {
+      props.history.push('/login')
+    }
   }
 
   // Talk: Anjana Vakil: Learning Functional Programming with JavaScript - JSUnconf 2016
@@ -33,6 +37,7 @@ class Home extends Component {
   }
 
   render() {
+    console.log('render disparando infinitos')
     return (
       <Fragment>
         <Cabecalho>
