@@ -1,5 +1,13 @@
 [
     {
+        "login": "novousuario",
+        "nome": "Novo",
+        "sobrenome": "Nome",
+        "foto": "https://www.caelum.com.br/imagens/instrutores/fotos/mario-souto-120.jpg",
+        "email": "email@novo.com.br",
+        "senha": "123456"
+    },
+    {
         "login": "omariosouto",
         "nome": "Mario",
         "sobrenome": "Souto",

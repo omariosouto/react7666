@@ -14,30 +14,48 @@ class Home extends Component {
 
     this.state = {
       novoTweet: '',
-      tweets: ['x']
+      tweets: []
     } 
     // Código triste da vida
     this.adicionaTweet = this.adicionaTweet.bind(this)
-    console.log(props)
-    if(!localStorage.getItem('TOKEN')) {
-      props.history.push('/login')
-    }
+  }
+
+  componentDidMount() {
+    console.log('DidMount')
+    fetch('http://localhost:3001/tweets')
+      .then((respostaDoServer) => respostaDoServer.json())
+      .then((tweetsDoServidor) => {
+        console.log(tweetsDoServidor)
+        this.setState({
+          tweets: tweetsDoServidor
+        })    
+      })
   }
 
   // Talk: Anjana Vakil: Learning Functional Programming with JavaScript - JSUnconf 2016
-  adicionaTweet(infosDoEvento) {
+  adicionaTweet(infosDoEvento) {    
     infosDoEvento.preventDefault()
     // Pegar o value do input
     const novoTweet = this.state.novoTweet
 
-    this.setState({
-      tweets: [novoTweet, ...this.state.tweets]
-    })
-
+    if(novoTweet) {
+      // Manda o texto e o TOKEN
+      fetch(`http://localhost:3001/tweets?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`,
+        { method: 'POST' ,body: JSON.stringify({ conteudo: novoTweet })  })
+      .then((respostaDoServer) => {
+          return respostaDoServer.json()
+      })
+      .then((tweetProntoDoServer) => {
+          console.log(tweetProntoDoServer)
+          this.setState({
+            tweets: [tweetProntoDoServer, ...this.state.tweets]
+          })
+      })
+    }
   }
 
   render() {
-    console.log('render disparando infinitos')
+
     return (
       <Fragment>
         <Cabecalho>
@@ -75,9 +93,14 @@ class Home extends Component {
             <Dashboard posicao="centro">
                 <Widget>
                     <div className="tweetsArea">
-                        { this.state.tweets.map((tweet, index) =>
-                          <Tweet key={tweet} texto={tweet} />
-                        ) }
+                        { this.state.tweets.length === 0
+                          ? <div>Mensagem avisando</div> : ''
+                        }
+                        {
+                          this.state.tweets.map((tweet, index) =>
+                            <Tweet key={tweet + index} tweetInfo={tweet} texto={tweet.conteudo} />
+                          )
+                        }
                     </div>
                 </Widget>
             </Dashboard>
