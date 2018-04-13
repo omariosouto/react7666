@@ -22,7 +22,7 @@ class Home extends Component {
 
   componentDidMount() {
     console.log('DidMount')
-    fetch('http://localhost:3001/tweets')
+    fetch(`http://localhost:3001/tweets?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`)
       .then((respostaDoServer) => respostaDoServer.json())
       .then((tweetsDoServidor) => {
         console.log(tweetsDoServidor)
