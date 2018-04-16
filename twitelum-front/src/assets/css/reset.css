@@ -53,3 +53,28 @@ fieldset[disabled] .btn {
   width: 100%;
   display: block;
 }
+
+
+
+/* vergonha/shame */
+
+.modal {
+  opacity: 0;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.4);
+  pointer-events: none;
+}
+
+.modal--active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal__wrap {
+  margin: 10%;
+}
