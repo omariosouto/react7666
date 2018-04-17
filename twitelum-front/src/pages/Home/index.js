@@ -7,11 +7,17 @@ import TrendsArea from '../../components/TrendsArea'
 import Tweet from '../../components/Tweet'
 import Modal from '../../components/Modal'
 
+import PropTypes from 'prop-types'
+import * as TweetsAPI from '../../apis/TweetsAPI'
 
 class Home extends Component {
+  
+  static contextTypes = {
+    store: PropTypes.object.isRequired
+  }
+  
   constructor(props) {
     super()
-
     this.state = {
       novoTweet: '',
       tweets: [],
@@ -22,24 +28,17 @@ class Home extends Component {
   }
 
   componentWillMount() {
-    window.store.subscribe(() => {
+    this.context.store.subscribe(() => {
       console.log('Roda sempre que tiver um dispatch')
       this.setState({
-        tweets: window.store.getState()
+        tweets: this.context.store.getState()
       })
     })
   }
 
   componentDidMount() {
     console.log('DidMount')
-    fetch(`http://localhost:3001/tweets?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`)
-      .then((respostaDoServer) => respostaDoServer.json())
-      .then((tweetsDoServidor) => {
-        window.store.dispatch({ type: 'CARREGA_TWEETS', tweets: tweetsDoServidor })
-        // this.setState({
-        //   tweets: tweetsDoServidor
-        // })    
-      })
+    this.context.store.dispatch(TweetsAPI.carrega())
   }
 
   // Talk: Anjana Vakil: Learning Functional Programming with JavaScript - JSUnconf 2016
@@ -103,7 +102,6 @@ class Home extends Component {
   }
 
   render() {
-
     return (
       <Fragment>
         <Cabecalho>

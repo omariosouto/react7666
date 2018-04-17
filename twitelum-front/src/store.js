@@ -1,29 +1,5 @@
-// import { createStore } from 'redux'
-
-const createStore = (tweetsReducer) => {
-    let state;
-    const subscribers = []
-
-    const dispatch = (action) => {
-        state = tweetsReducer(state, action)
-        subscribers.forEach( (funcao) => funcao() )
-    }
-
-    const subscribe = (funcao) => {
-        subscribers.push(funcao)
-    }
-
-    dispatch({ type: 'acao vazia inicial da porra toda' })
-
-    return {
-        getState: () => {
-            return state
-        },
-        dispatch,
-        subscribe
-    }
-}
-
+import { createStore, applyMiddleware } from 'redux'
+import thunk from 'redux-thunk'
 
 function tweetsReducer(estadoInicial = [], action = {}) {
     console.log(action)
@@ -36,7 +12,11 @@ function tweetsReducer(estadoInicial = [], action = {}) {
     return estadoInicial
 }
 
-const store = createStore(tweetsReducer)
-console.log(store.getState())
+const store = createStore(
+        tweetsReducer,
+        applyMiddleware(
+            thunk
+        )
+    )
 
-window.store = store
+export default store

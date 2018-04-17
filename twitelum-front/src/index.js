@@ -21,12 +21,15 @@ import { BrowserRouter } from 'react-router-dom'
 import Routes from './routes'
 
 // Coisas do Redux
-import './store'
+import { Provider } from 'react-redux'
+import store from './store'
 
 ReactDOM.render(
-    <BrowserRouter>
-        <Routes />
-    </BrowserRouter>
+    <Provider store={store}>
+        <BrowserRouter>
+            <Routes />
+        </BrowserRouter>
+    </Provider>
     , document.getElementById('root'));
 
 
