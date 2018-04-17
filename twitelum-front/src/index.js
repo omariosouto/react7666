@@ -20,6 +20,9 @@ import registerServiceWorker from './registerServiceWorker';
 import { BrowserRouter } from 'react-router-dom'
 import Routes from './routes'
 
+// Coisas do Redux
+import './store'
+
 ReactDOM.render(
     <BrowserRouter>
         <Routes />

@@ -21,15 +21,24 @@ class Home extends Component {
     this.adicionaTweet = this.adicionaTweet.bind(this)
   }
 
+  componentWillMount() {
+    window.store.subscribe(() => {
+      console.log('Roda sempre que tiver um dispatch')
+      this.setState({
+        tweets: window.store.getState()
+      })
+    })
+  }
+
   componentDidMount() {
     console.log('DidMount')
     fetch(`http://localhost:3001/tweets?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`)
       .then((respostaDoServer) => respostaDoServer.json())
       .then((tweetsDoServidor) => {
-        console.log(tweetsDoServidor)
-        this.setState({
-          tweets: tweetsDoServidor
-        })    
+        window.store.dispatch({ type: 'CARREGA_TWEETS', tweets: tweetsDoServidor })
+        // this.setState({
+        //   tweets: tweetsDoServidor
+        // })    
       })
   }
 
