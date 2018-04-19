@@ -4,7 +4,7 @@ import NavMenu from '../../components/NavMenu'
 import Dashboard from '../../components/Dashboard'
 import Widget from '../../components/Widget'
 import TrendsArea from '../../components/TrendsArea'
-import Tweet from '../../components/Tweet'
+import Tweet from '../../containers/TweetPadrao'
 import Modal from '../../components/Modal'
 
 import PropTypes from 'prop-types'
@@ -29,75 +29,56 @@ class Home extends Component {
 
   componentWillMount() {
     this.context.store.subscribe(() => {
-      console.log('Roda sempre que tiver um dispatch')
+      console.log('Roda sempre que tiver um dispatch', this.context.store.getState())
       this.setState({
-        tweets: this.context.store.getState()
+        tweets: this.context.store.getState().tweets.lista,
+        tweetAtivo: this.context.store.getState().tweets.tweetAtivo
       })
     })
   }
 
   componentDidMount() {
-    console.log('DidMount')
+    // console.log('DidMount')
     this.context.store.dispatch(TweetsAPI.carrega())
   }
 
   // Talk: Anjana Vakil: Learning Functional Programming with JavaScript - JSUnconf 2016
   adicionaTweet(infosDoEvento) {    
     infosDoEvento.preventDefault()
-    // Pegar o value do input
     const novoTweet = this.state.novoTweet
 
-    if(novoTweet) {
-      // Manda o texto e o TOKEN
-      fetch(`http://localhost:3001/tweets?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`,
-        { method: 'POST' ,body: JSON.stringify({ conteudo: novoTweet })  })
-      .then((respostaDoServer) => {
-          return respostaDoServer.json()
-      })
-      .then((tweetProntoDoServer) => {
-          console.log(tweetProntoDoServer)
-          this.setState({
-            tweets: [tweetProntoDoServer, ...this.state.tweets]
-          })
-      })
-    }
+    this.context.store.dispatch(TweetsAPI.adiciona(novoTweet))
+
+    this.setState({
+      novoTweet: ''
+    })
   }
 
-  removeTweet = (idDoTweet) => {
-    fetch(`http://localhost:3001/tweets/${idDoTweet}?X-AUTH-TOKEN=${localStorage.getItem('TOKEN')}`, {
-      method: 'DELETE'
-    })
-    .then((respostaDoServer) => respostaDoServer.json())
-    .then((respostaPronta) => {
-        const tweetsAtualizados = this
-                .state.tweets.filter((tweetAtual) => tweetAtual._id !== idDoTweet)    
-        this.setState({
-          tweets: tweetsAtualizados,
-          tweetAtivo: {}
-        })
-    })
-  }
+  // removeTweet = (idDoTweet) => {
+  //   this.context.store.dispatch(TweetsAPI.remove(idDoTweet))
+
+  //   this.setState({
+  //     tweetAtivo: {}
+  //   })
+  // }
 
   abreModalParaTweet = (idDoTweetQueVaiNoModal, event) => {
-    console.log('idDoTweetQueVaiNoModal', idDoTweetQueVaiNoModal)
-    // Fazer alguma operação no array de tweets
+    // console.log('idDoTweetQueVaiNoModal', idDoTweetQueVaiNoModal)
+    // Fazer alguma operação no array de tweets    
     const ignoraModal = event.target.closest('.ignoraModal')
+    console.log(ignoraModal)
     if(!ignoraModal) {
-      const tweetAtivo = this.state
-                             .tweets
-                            .find((tweetAtual) => tweetAtual._id === idDoTweetQueVaiNoModal )
-      this.setState({
-        tweetAtivo: tweetAtivo
-      })
+      this.context.store.dispatch({ type: 'ADD_TWEET_ATIVO', idDoTweetQueVaiNoModal })
     }
   }
 
   fechaModal = (event) => {
     const isModal = event.target.classList.contains('modal')
     if(isModal) {
-      this.setState({
-        tweetAtivo: {}
-      })
+      this.context.store.dispatch({ type: 'REMOVE_TWEET_ATIVO' })
+      // this.setState({
+      //   tweetAtivo: {}
+      // })
     }
   }
 
@@ -146,7 +127,6 @@ class Home extends Component {
                           Boolean(this.state.tweets.length) && this.state.tweets.map((tweet, index) =>
                             <Tweet 
                               key={tweet._id}
-                              removeHandler={() => this.removeTweet(tweet._id)}
                               tweetInfo={tweet}
                               handleModal={(event) => this.abreModalParaTweet(tweet._id, event)}
                               texto={tweet.conteudo}/>
@@ -166,6 +146,17 @@ class Home extends Component {
               tweetInfo={this.state.tweetAtivo} />
           </Widget>
         </Modal>
+
+
+       {
+          this.context.store.getState().notificacao && 
+          <div
+          className="notificacaoMsg"
+          onAnimationEnd={ () => this.context.store.dispatch({ type: 'REMOVE_NOTIFICACAO' }) } >
+            { this.context.store.getState().notificacao }  
+          </div>
+       }               
+        
 
 
       </Fragment>

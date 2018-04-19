@@ -10,6 +10,3 @@ app.listen(port, function() {
 })
 
 
-setInterval(() => {
-    http.get('http://twitelum-api.herokuapp.com/')
-}, 240000)
